@@ -9,3 +9,4 @@
 /dist
 /docs/build
 /wheelhouse
+.mypy_cache

@@ -1,4 +1,5 @@
-COST_PER_BYTE = 0.00001
+COST_PER_KBYTE = 0.01
+MIN_FEE = 0.001
 
 
 def set_fee_cache_time(seconds):
@@ -9,11 +10,12 @@ def set_fee_cache_time(seconds):
 def get_fee(tx_size_bytes: int):
     """Gets the recommended satoshi per byte fee."""
 
-    if tx_size_bytes < 1001:
-        return 0.01
+    fee = (tx_size_bytes / 1000) * COST_PER_KBYTE
 
+    if fee <= MIN_FEE:
+        return MIN_FEE
     else:
-        return round(tx_size_bytes * COST_PER_BYTE, 5)
+        return round(fee, 5)
 
 
 def get_fee_cached(tx_size):

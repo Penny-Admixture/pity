@@ -118,9 +118,17 @@ class TxOut:
 class TxObj:
     __slots__ = ('version', 'TxIn', 'TxOut', 'locktime')
 
-    def __init__(self, version, TxIn, TxOut, locktime):
+    def __init__(self,
+                 version: int,
+                 timestamp: int,
+                 TxIn: TxIn,
+                 TxOut: TxOut,
+                 locktime: int
+                 ) -> None:
+
         segwit_tx = any([i.segwit_input or i.witness for i in TxIn])
         self.version = version
+        self.timestamp = timestamp
         self.TxIn = TxIn
         if segwit_tx:
             for i in self.TxIn:
@@ -130,13 +138,15 @@ class TxObj:
 
     def __eq__(self, other):
         return (self.version == other.version and
+                self.timestamp == other.timestamp and
                 self.TxIn == other.TxIn and
                 self.TxOut == other.TxOut and
                 self.locktime == other.locktime)
 
     def __repr__(self):
-        return 'TxObj({}, {}, {}, {})'.format(
+        return 'TxObj({}, {}, {}, {}, {})'.format(
             repr(self.version),
+            repr(self.timestamp),
             repr(self.TxIn),
             repr(self.TxOut),
             repr(self.locktime)
@@ -148,6 +158,7 @@ class TxObj:
         wit = b''.join([w.witness for w in self.TxIn])
         return b''.join([
             self.version,
+            self.timestamp,
             MARKER if wit else b'',
             FLAG if wit else b'',
             inp,
@@ -161,6 +172,7 @@ class TxObj:
         out = int_to_varint(len(self.TxOut)) + b''.join(map(bytes, self.TxOut))
         return b''.join([
             self.version,
+            self.timestamp,
             inp,
             out,
             self.locktime

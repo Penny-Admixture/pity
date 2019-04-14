@@ -2,6 +2,7 @@
 # Transactions:
 VERSION_1 = 0x01.to_bytes(4, byteorder='little')
 VERSION_2 = 0x02.to_bytes(4, byteorder='little')
+TIMESTAMP = 0x01.to_bytes(4, byteorder='little')
 MARKER = b'\x00'
 FLAG = b'\x01'
 SEQUENCE = 0xffffffff.to_bytes(4, byteorder='little')
@@ -24,7 +25,7 @@ OP_EQUAL = b'\x87'
 MESSAGE_LIMIT = 256
 
 # Address formats:
-BECH32_VERSION_SET = ('pc', 'tppc', 'pcrt')
+BECH32_VERSION_SET = ('pc', 'tpc', 'pcrt')
 BECH32_MAIN_VERSION_SET = BECH32_VERSION_SET[:1]
 BECH32_TEST_VERSION_SET = BECH32_VERSION_SET[1:]
 MAIN_PUBKEY_HASH = b'\x37'
@@ -33,7 +34,7 @@ TEST_PUBKEY_HASH = b'\x6f'
 TEST_SCRIPT_HASH = b'\xc4'
 
 # Keys:
-MAIN_PRIVATE_KEY = b'\x80'
+MAIN_PRIVATE_KEY = b'\xb7'
 MAIN_BIP32_PUBKEY = b'\x04\x88\xb2\x1e'
 MAIN_BIP32_PRIVKEY = b'\x04\x88\xad\xe4'
 TEST_PRIVATE_KEY = b'\xef'

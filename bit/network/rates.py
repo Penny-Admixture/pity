@@ -15,15 +15,15 @@ ONE = Decimal(1)
 
 # https://en.bitcoin.it/wiki/Units
 SATOSHI = 1
-uBTC = 10 ** 2
-mBTC = 10 ** 5
-BTC = 10 ** 8
+uPPC = 10 ** 2
+mPPC = 10 ** 5
+PPC = 10 ** 6
 
 SUPPORTED_CURRENCIES = OrderedDict([
     ('satoshi', 'Satoshi'),
-    ('ubtc', 'Microbitcoin'),
-    ('mbtc', 'Millibitcoin'),
-    ('btc', 'Bitcoin'),
+    ('uppc', 'MicroPeercoin'),
+    ('mppc', 'MilliPeercoin'),
+    ('ppc', 'Peercoin'),
     ('usd', 'United States Dollar'),
     ('eur', 'Eurozone Euro'),
     ('gbp', 'Pound Sterling'),
@@ -50,9 +50,9 @@ SUPPORTED_CURRENCIES = OrderedDict([
 # https://en.wikipedia.org/wiki/ISO_4217
 CURRENCY_PRECISION = {
     'satoshi': 0,
-    'ubtc': 2,
-    'mbtc': 5,
-    'btc': 8,
+    'uppc': 2,
+    'mppc': 5,
+    'ppc': 6,
     'usd': 2,
     'eur': 2,
     'gbp': 2,
@@ -87,15 +87,15 @@ def satoshi_to_satoshi():
 
 
 def ubtc_to_satoshi():
-    return uBTC
+    return uPPC
 
 
 def mbtc_to_satoshi():
-    return mBTC
+    return mPPC
 
 
 def btc_to_satoshi():
-    return BTC
+    return PPC
 
 
 class BitpayRates:

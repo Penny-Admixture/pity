@@ -109,10 +109,14 @@ class PeercoinNet(ExplorerAPI):
 
     @classmethod
     def get_transactions_testnet(cls, address):
-        r = requests.get(cls.TEST_ADDRESS_API + address, timeout=DEFAULT_TIMEOUT)
+
+        r = requests.get(cls.TEST_ADDRESS_API.format(address), timeout=DEFAULT_TIMEOUT)
         if r.status_code != 200:  # pragma: no cover
             raise ConnectionError
-        return r.json()["transactions"]
+        try:
+            return [i['addresses'] for i in r.json()["last_txs"]]
+        except KeyError:
+            return []
 
     @classmethod
     def get_transaction_by_id_testnet(cls, txid):

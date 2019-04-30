@@ -11,6 +11,148 @@ def set_service_timeout(seconds):
     DEFAULT_TIMEOUT = seconds
 
 
+class ExplorerAPI:
+
+    MAIN_ENDPOINT = "https://explorer.peercoin.net/"
+    MAIN_API = MAIN_ENDPOINT + "api"
+    MAIN_EXT_API = MAIN_ENDPOINT + "ext"
+    MAIN_BALANCE_API = MAIN_EXT_API + "/getbalance/{}"
+    MAIN_ADDRESS_API = MAIN_EXT_API + "/getaddress/{}"
+    MAIN_TX_API = MAIN_API + '/getrawtransaction?txid={}'
+    MAIN_UNSPENT_API = MAIN_EXT_API + "/listunspent/{}"
+    MAIN_TX_PUSH_API = MAIN_API + "/sendrawtransaction/{}"
+
+    @classmethod
+    def get_balance(cls, address: str) -> str:
+
+        r = requests.get(cls.MAIN_BALANCE_API.format(address), timeout=DEFAULT_TIMEOUT)
+        if r.status_code != 200:  # pragma: no cover
+            raise ConnectionError
+        try:
+            return currency_to_satoshi(r.json(), "btc")
+        except:
+            return 0
+
+    @classmethod
+    def get_transactions(cls, address: str) -> list:
+
+        r = requests.get(cls.MAIN_ADDRESS_API.format(address), timeout=DEFAULT_TIMEOUT)
+        if r.status_code != 200:  # pragma: no cover
+            raise ConnectionError
+
+        try:
+            return [i['addresses'] for i in r.json()["last_txs"]]
+        except KeyError:
+            return []
+
+    @classmethod
+    def get_transaction_by_id(cls, txid: str) -> str:
+
+        r = requests.get(cls.MAIN_TX_API.format(txid), timeout=DEFAULT_TIMEOUT)
+        if r.status_code != 200:  # pragma: no cover
+            raise ConnectionError
+        return r.text
+
+    @classmethod
+    def get_unspent(cls, address: str) -> list:
+
+        r = requests.get(cls.MAIN_UNSPENT_API.format(address), timeout=DEFAULT_TIMEOUT)
+        if r.status_code != 200:  # pragma: no cover
+            raise ConnectionError
+
+        try:
+            return [
+                Unspent(
+                    currency_to_satoshi(tx["value"], "btc"),
+                    1,  # presume 1 confirmation
+                    tx["script"],
+                    tx["tx_hash"],
+                    tx["tx_ouput_n"],
+                )
+                for tx in r.json()['unspent_outputs']
+            ]
+        except KeyError:
+            return []
+
+    @classmethod
+    def broadcast_tx(cls, tx_hex):  # pragma: no cover
+        r = requests.post(
+            cls.MAIN_TX_PUSH_API,
+            data={cls.TX_PUSH_PARAM: tx_hex},
+            timeout=DEFAULT_TIMEOUT,
+        )
+        return True if r.status_code == 200 else False
+
+
+class PeercoinNet(ExplorerAPI):
+
+    MAIN_ENDPOINT = ""
+    TEST_ENDPOINT = "https://testnet-explorer.peercoin.net/"
+
+    TEST_API = TEST_ENDPOINT + "api"
+    TEST_EXT_API = TEST_ENDPOINT + "ext"
+    TEST_BALANCE_API = TEST_EXT_API + "/getbalance/{}"
+    TEST_ADDRESS_API = TEST_EXT_API + "/getaddress/{}"
+    TEST_TX_API = TEST_API + '/getrawtransaction?txid={}'
+    TEST_UNSPENT_API = TEST_EXT_API + "/listunspent/{}"
+    TEST_TX_PUSH_API = TEST_API + "/sendrawtransaction/{}"
+
+    @classmethod
+    def get_balance_testnet(cls, address):
+        r = requests.get(cls.TEST_BALANCE_API.format(address), timeout=DEFAULT_TIMEOUT)
+        if r.status_code != 200:  # pragma: no cover
+            raise ConnectionError
+        try:
+            return currency_to_satoshi(r.json(), "btc")
+        except:
+            return 0
+
+    @classmethod
+    def get_transactions_testnet(cls, address):
+        r = requests.get(cls.TEST_ADDRESS_API + address, timeout=DEFAULT_TIMEOUT)
+        if r.status_code != 200:  # pragma: no cover
+            raise ConnectionError
+        return r.json()["transactions"]
+
+    @classmethod
+    def get_transaction_by_id_testnet(cls, txid):
+
+        r = requests.get(cls.TEST_TX_API.format(txid, timeout=DEFAULT_TIMEOUT))
+        if r.status_code != 200:  # pragma: no cover
+            raise ConnectionError
+        return r.text
+
+    @classmethod
+    def get_unspent_testnet(cls, address):
+
+        r = requests.get(cls.TEST_UNSPENT_API.format(address), timeout=DEFAULT_TIMEOUT)
+        if r.status_code != 200:  # pragma: no cover
+            raise ConnectionError
+
+        try:
+            return [
+                Unspent(
+                    currency_to_satoshi(tx["value"], "btc"),
+                    1,  # presume 1 confirmation
+                    tx["script"],
+                    tx["tx_hash"],
+                    tx["tx_ouput_n"],
+                )
+                for tx in r.json()['unspent_outputs']
+            ]
+        except KeyError:
+            return []
+
+    @classmethod
+    def broadcast_tx_testnet(cls, tx_hex):  # pragma: no cover
+        r = requests.post(
+            cls.TEST_TX_PUSH_API,
+            data={cls.TX_PUSH_PARAM: tx_hex},
+            timeout=DEFAULT_TIMEOUT,
+        )
+        return True if r.status_code == 200 else False
+
+
 class InsightAPI:
     MAIN_ENDPOINT = ""
     MAIN_ADDRESS_API = ""

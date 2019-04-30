@@ -3,6 +3,8 @@ from collections import namedtuple
 from itertools import islice
 import re
 from random import randint, shuffle
+import time
+
 from bit.crypto import double_sha256, sha256
 from bit.exceptions import InsufficientFunds
 from bit.format import address_to_public_key_hash, segwit_scriptpubkey
@@ -116,7 +118,7 @@ class TxOut:
 
 
 class TxObj:
-    __slots__ = ('version', 'TxIn', 'TxOut', 'locktime')
+    __slots__ = ('version', 'timestamp', 'TxIn', 'TxOut', 'locktime')
 
     def __init__(self,
                  version: int,
@@ -389,6 +391,7 @@ def deserialize(tx):
     segwit_tx = TxObj.is_segwit(tx)
 
     version, tx = read_bytes(tx, 4)
+    timestamp, tx = read_bytes(tx, 4)
 
     if segwit_tx:
         _, tx = read_bytes(tx, 1)  # ``marker`` is nulled
@@ -421,7 +424,7 @@ def deserialize(tx):
 
     locktime, _ = read_bytes(tx, 4)
 
-    txobj = TxObj(version, inputs, outputs, locktime)
+    txobj = TxObj(version, timestamp, inputs, outputs, locktime)
 
     return txobj
 
@@ -760,7 +763,7 @@ def create_new_transaction(private_key, unspents, outputs):
         inputs.append(TxIn(script_sig, txid, txindex, amount=amount,
                            segwit_input=unspent.segwit))
 
-    tx_unsigned = TxObj(version, inputs, outputs, lock_time)
+    tx_unsigned = TxObj(version, int(time.time()), inputs, outputs, lock_time)
 
     tx = sign_tx(private_key, tx_unsigned, unspents=unspents)
     return tx

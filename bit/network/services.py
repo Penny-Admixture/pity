@@ -52,7 +52,7 @@ class ExplorerAPI:
         if r.status_code != 200:  # pragma: no cover
             raise ConnectionError
 
-        if r.text is not "There was an error. Check your console.":
+        if not r.text.startswith("There"):
             return r.text
         else:
             return None
@@ -128,7 +128,7 @@ class PeercoinNet(ExplorerAPI):
         r = requests.get(cls.TEST_TX_API.format(txid, timeout=DEFAULT_TIMEOUT))
         if r.status_code != 200:  # pragma: no cover
             raise ConnectionError
-        if r.text is not "There was an error. Check your console.":
+        if not r.text.startswith("There"):
             return r.text
         else:
             return None
@@ -521,48 +521,43 @@ class NetworkAPI:
     )
 
     GET_BALANCE_MAIN = [
-        BitpayAPI.get_balance,
-        SmartbitAPI.get_balance,
-        BlockchainAPI.get_balance,
-    ]
-    GET_TRANSACTIONS_MAIN = [
-        BitpayAPI.get_transactions,  # Limit 1000
-        SmartbitAPI.get_transactions,  # Limit 1000
-        BlockchainAPI.get_transactions,
-    ]  # No limit, requires multiple requests
-    GET_TRANSACTION_BY_ID_MAIN = [
-        BitpayAPI.get_transaction_by_id,
-        SmartbitAPI.get_transaction_by_id,
-        BlockchainAPI.get_transaction_by_id,
-    ]
-    GET_UNSPENT_MAIN = [
-        BitpayAPI.get_unspent,  # No limit
-        SmartbitAPI.get_unspent,  # Limit 1000
-        BlockchainAPI.get_unspent,
-    ]  # Limit 250
-    BROADCAST_TX_MAIN = [
-        BitpayAPI.broadcast_tx,
-        SmartbitAPI.broadcast_tx,  # Limit 5/minute
-        BlockchainAPI.broadcast_tx,
+        PeercoinNet.get_balance,
     ]
 
-    GET_BALANCE_TEST = [BitpayAPI.get_balance_testnet, SmartbitAPI.get_balance_testnet]
-    GET_TRANSACTIONS_TEST = [
-        BitpayAPI.get_transactions_testnet,  # Limit 1000
-        SmartbitAPI.get_transactions_testnet,
-    ]  # Limit 1000
-    GET_TRANSACTION_BY_ID_TEST = [
-        BitpayAPI.get_transaction_by_id_testnet,
-        SmartbitAPI.get_transaction_by_id_testnet,
+    GET_TRANSACTIONS_MAIN = [
+        PeercoinNet.get_transactions,
     ]
+
+    GET_TRANSACTION_BY_ID_MAIN = [
+        PeercoinNet.get_transaction_by_id
+    ]
+
+    GET_UNSPENT_MAIN = [
+        PeercoinNet.get_unspent,
+    ]
+
+    BROADCAST_TX_MAIN = [
+        PeercoinNet.broadcast_tx,
+    ]
+
+    GET_BALANCE_TEST = [PeercoinNet.get_balance_testnet
+    ]
+
+    GET_TRANSACTIONS_TEST = [
+        PeercoinNet.get_transactions_testnet,
+    ]
+
+    GET_TRANSACTION_BY_ID_TEST = [
+        PeercoinNet.get_transaction_by_id_testnet,
+    ]
+
     GET_UNSPENT_TEST = [
-        BitpayAPI.get_unspent_testnet,  # No limit
-        SmartbitAPI.get_unspent_testnet,
-    ]  # Limit 1000
+        PeercoinNet.get_unspent_testnet
+    ]
+
     BROADCAST_TX_TEST = [
-        BitpayAPI.broadcast_tx_testnet,
-        SmartbitAPI.broadcast_tx_testnet,
-    ]  # Limit 5/minute
+        PeercoinNet.broadcast_tx_testnet
+    ]
 
     @classmethod
     def get_balance(cls, address):

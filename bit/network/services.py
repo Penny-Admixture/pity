@@ -51,7 +51,11 @@ class ExplorerAPI:
         r = requests.get(cls.MAIN_TX_API.format(txid), timeout=DEFAULT_TIMEOUT)
         if r.status_code != 200:  # pragma: no cover
             raise ConnectionError
-        return r.text
+
+        if r.text is not "There was an error. Check your console.":
+            return r.text
+        else:
+            return None
 
     @classmethod
     def get_unspent(cls, address: str) -> list:
@@ -124,7 +128,10 @@ class PeercoinNet(ExplorerAPI):
         r = requests.get(cls.TEST_TX_API.format(txid, timeout=DEFAULT_TIMEOUT))
         if r.status_code != 200:  # pragma: no cover
             raise ConnectionError
-        return r.text
+        if r.text is not "There was an error. Check your console.":
+            return r.text
+        else:
+            return None
 
     @classmethod
     def get_unspent_testnet(cls, address):

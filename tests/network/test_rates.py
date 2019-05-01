@@ -41,7 +41,7 @@ def test_mbtc_to_satoshi():
 def test_btc_to_satoshi():
     s = btc_to_satoshi()
     assert isinstance(s, int)
-    assert s == 100000000
+    assert s == 1000000
 
 
 def test_currency_to_satoshi():
@@ -50,14 +50,14 @@ def test_currency_to_satoshi():
 
 class TestSatoshiToCurrency:
     def test_no_exponent(self):
-        assert satoshi_to_currency(1, 'btc') == '0.00000001'
+        assert satoshi_to_currency(1, 'ppc') == '0.000001'
 
     def test_zero_places(self):
         assert Decimal(satoshi_to_currency(100000, 'jpy')).as_tuple().exponent == 0
 
 
 def test_satoshi_to_currency_cached():
-    assert satoshi_to_currency_cached(1, 'ubtc') == '0.01'
+    assert satoshi_to_currency_cached(1, 'uppc') == '0.01'
 
 
 def test_rates_close():

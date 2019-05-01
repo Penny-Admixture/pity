@@ -36,15 +36,9 @@ SUPPORTED_CURRENCIES = OrderedDict([
     ('brl', 'Brazilian Real'),
     ('chf', 'Swiss Franc'),
     ('sek', 'Swedish Krona'),
-    ('dkk', 'Danish Krone'),
-    ('isk', 'Icelandic Krona'),
     ('pln', 'Polish Zloty'),
-    ('hkd', 'Hong Kong Dollar'),
     ('krw', 'South Korean Won'),
-    ('sgd', 'Singapore Dollar'),
-    ('thb', 'Thai Baht'),
     ('twd', 'New Taiwan Dollar'),
-    ('clp', 'Chilean Peso')
 ])
 
 # https://en.wikipedia.org/wiki/ISO_4217
@@ -98,190 +92,73 @@ def btc_to_satoshi():
     return PPC
 
 
-class BitpayRates:
-    SINGLE_RATE = 'https://bitpay.com/api/rates/'
+class CoinPaprikaRates:
+    SINGLE_RATE = 'https://api.coinpaprika.com/v1/price-converter?base_currency_id=ppc-peercoin&quote_currency_id={}&amount=1'
 
     @classmethod
-    def currency_to_satoshi(cls, currency):
-        rate = requests.get(cls.SINGLE_RATE + currency).json()['rate']
-        return int(ONE / Decimal(rate) * BTC)
+    def currency_to_satoshi(cls, currency: str) -> int:
+        rate = requests.get(cls.SINGLE_RATE.format(currency)).json()["price"]
+        return int(ONE / Decimal(rate) * PPC)
 
     @classmethod
-    def usd_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('usd')
+    def usd_to_satoshi(cls):
+        return cls.currency_to_satoshi('usd-us-dollars')
 
     @classmethod
-    def eur_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('eur')
+    def eur_to_satoshi(cls):
+        return cls.currency_to_satoshi('eur-euro')
 
     @classmethod
-    def gbp_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('gbp')
+    def gbp_to_satoshi(cls):
+        return cls.currency_to_satoshi('gbp-pound-sterling')
 
     @classmethod
-    def jpy_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('jpy')
+    def jpy_to_satoshi(cls):
+        return cls.currency_to_satoshi('jpy-japanese-yen')
 
     @classmethod
-    def cny_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('cny')
+    def cny_to_satoshi(cls):
+        return cls.currency_to_satoshi('cny-yuan-renminbi')
 
     @classmethod
-    def hkd_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('hkd')
+    def cad_to_satoshi(cls):
+        return cls.currency_to_satoshi('cad-canadian-dollar')
 
     @classmethod
-    def cad_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('cad')
+    def aud_to_satoshi(cls):
+        return cls.currency_to_satoshi('aud-australian-dollar')
 
     @classmethod
-    def aud_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('aud')
+    def nzd_to_satoshi(cls):
+        return cls.currency_to_satoshi('nzd-new-zealand-dollar')
 
     @classmethod
-    def nzd_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('nzd')
+    def rub_to_satoshi(cls):
+        return cls.currency_to_satoshi('rub-russian-ruble')
 
     @classmethod
-    def rub_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('rub')
+    def brl_to_satoshi(cls):
+        return cls.currency_to_satoshi('brl-brazil-real')
 
     @classmethod
-    def brl_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('brl')
+    def chf_to_satoshi(cls):
+        return cls.currency_to_satoshi('chf-swiss-franc')
 
     @classmethod
-    def chf_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('chf')
+    def sek_to_satoshi(cls):
+        return cls.currency_to_satoshi('sek-swedish-krona')
 
     @classmethod
-    def sek_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('sek')
+    def pln_to_satoshi(cls):
+        return cls.currency_to_satoshi('pln-polish-zloty')
 
     @classmethod
-    def dkk_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('dkk')
+    def krw_to_satoshi(cls):
+        return cls.currency_to_satoshi('krw-south-korea-won')
 
     @classmethod
-    def isk_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('isk')
-
-    @classmethod
-    def pln_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('pln')
-
-    @classmethod
-    def krw_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('krw')
-
-    @classmethod
-    def clp_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('clp')
-
-    @classmethod
-    def sgd_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('sgd')
-
-    @classmethod
-    def thb_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('thb')
-
-    @classmethod
-    def twd_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('twd')
-
-
-class BlockchainRates:
-    SINGLE_RATE = 'https://blockchain.info/tobtc?currency={}&value=1'
-
-    @classmethod
-    def currency_to_satoshi(cls, currency):
-        rate = requests.get(cls.SINGLE_RATE.format(currency)).json()
-        return int(Decimal(rate) * BTC)
-
-    @classmethod
-    def usd_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('USD')
-
-    @classmethod
-    def eur_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('EUR')
-
-    @classmethod
-    def gbp_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('GBP')
-
-    @classmethod
-    def jpy_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('JPY')
-
-    @classmethod
-    def cny_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('CNY')
-
-    @classmethod
-    def hkd_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('HKD')
-
-    @classmethod
-    def cad_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('CAD')
-
-    @classmethod
-    def aud_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('AUD')
-
-    @classmethod
-    def nzd_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('NZD')
-
-    @classmethod
-    def rub_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('RUB')
-
-    @classmethod
-    def brl_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('BRL')
-
-    @classmethod
-    def chf_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('CHF')
-
-    @classmethod
-    def sek_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('SEK')
-
-    @classmethod
-    def dkk_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('DKK')
-
-    @classmethod
-    def isk_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('ISK')
-
-    @classmethod
-    def pln_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('PLN')
-
-    @classmethod
-    def krw_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('KRW')
-
-    @classmethod
-    def clp_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('CLP')
-
-    @classmethod
-    def sgd_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('SGD')
-
-    @classmethod
-    def thb_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('THB')
-
-    @classmethod
-    def twd_to_satoshi(cls):  # pragma: no cover
-        return cls.currency_to_satoshi('TWD')
+    def twd_to_satoshi(cls):
+        return cls.currency_to_satoshi('twd-taiwan-new-dollar')
 
 
 class RatesAPI:
@@ -291,27 +168,21 @@ class RatesAPI:
     IGNORED_ERRORS = (requests.exceptions.ConnectionError,
                       requests.exceptions.Timeout)
 
-    USD_RATES = [BitpayRates.usd_to_satoshi, BlockchainRates.usd_to_satoshi]
-    EUR_RATES = [BitpayRates.eur_to_satoshi, BlockchainRates.eur_to_satoshi]
-    GBP_RATES = [BitpayRates.gbp_to_satoshi, BlockchainRates.gbp_to_satoshi]
-    JPY_RATES = [BitpayRates.jpy_to_satoshi, BlockchainRates.jpy_to_satoshi]
-    CNY_RATES = [BitpayRates.cny_to_satoshi, BlockchainRates.cny_to_satoshi]
-    HKD_RATES = [BitpayRates.hkd_to_satoshi, BlockchainRates.hkd_to_satoshi]
-    CAD_RATES = [BitpayRates.cad_to_satoshi, BlockchainRates.cad_to_satoshi]
-    AUD_RATES = [BitpayRates.aud_to_satoshi, BlockchainRates.aud_to_satoshi]
-    NZD_RATES = [BitpayRates.nzd_to_satoshi, BlockchainRates.nzd_to_satoshi]
-    RUB_RATES = [BitpayRates.rub_to_satoshi, BlockchainRates.rub_to_satoshi]
-    BRL_RATES = [BitpayRates.brl_to_satoshi, BlockchainRates.brl_to_satoshi]
-    CHF_RATES = [BitpayRates.chf_to_satoshi, BlockchainRates.chf_to_satoshi]
-    SEK_RATES = [BitpayRates.sek_to_satoshi, BlockchainRates.sek_to_satoshi]
-    DKK_RATES = [BitpayRates.dkk_to_satoshi, BlockchainRates.dkk_to_satoshi]
-    ISK_RATES = [BitpayRates.isk_to_satoshi, BlockchainRates.isk_to_satoshi]
-    PLN_RATES = [BitpayRates.pln_to_satoshi, BlockchainRates.pln_to_satoshi]
-    KRW_RATES = [BitpayRates.krw_to_satoshi, BlockchainRates.krw_to_satoshi]
-    CLP_RATES = [BitpayRates.clp_to_satoshi, BlockchainRates.clp_to_satoshi]
-    SGD_RATES = [BitpayRates.sgd_to_satoshi, BlockchainRates.sgd_to_satoshi]
-    THB_RATES = [BitpayRates.thb_to_satoshi, BlockchainRates.thb_to_satoshi]
-    TWD_RATES = [BitpayRates.twd_to_satoshi, BlockchainRates.twd_to_satoshi]
+    USD_RATES = [CoinPaprikaRates.usd_to_satoshi]
+    EUR_RATES = [CoinPaprikaRates.eur_to_satoshi]
+    GBP_RATES = [CoinPaprikaRates.gbp_to_satoshi]
+    JPY_RATES = [CoinPaprikaRates.jpy_to_satoshi]
+    CNY_RATES = [CoinPaprikaRates.cny_to_satoshi]
+    CAD_RATES = [CoinPaprikaRates.cad_to_satoshi]
+    AUD_RATES = [CoinPaprikaRates.aud_to_satoshi]
+    NZD_RATES = [CoinPaprikaRates.nzd_to_satoshi]
+    RUB_RATES = [CoinPaprikaRates.rub_to_satoshi]
+    BRL_RATES = [CoinPaprikaRates.brl_to_satoshi]
+    CHF_RATES = [CoinPaprikaRates.chf_to_satoshi]
+    SEK_RATES = [CoinPaprikaRates.sek_to_satoshi]
+    PLN_RATES = [CoinPaprikaRates.pln_to_satoshi]
+    KRW_RATES = [CoinPaprikaRates.krw_to_satoshi]
+    TWD_RATES = [CoinPaprikaRates.twd_to_satoshi]
 
     @classmethod
     def usd_to_satoshi(cls):  # pragma: no cover
@@ -457,28 +328,6 @@ class RatesAPI:
         raise ConnectionError('All APIs are unreachable.')
 
     @classmethod
-    def dkk_to_satoshi(cls):  # pragma: no cover
-
-        for api_call in cls.DKK_RATES:
-            try:
-                return api_call()
-            except cls.IGNORED_ERRORS:
-                pass
-
-        raise ConnectionError('All APIs are unreachable.')
-
-    @classmethod
-    def isk_to_satoshi(cls):  # pragma: no cover
-
-        for api_call in cls.ISK_RATES:
-            try:
-                return api_call()
-            except cls.IGNORED_ERRORS:
-                pass
-
-        raise ConnectionError('All APIs are unreachable.')
-
-    @classmethod
     def pln_to_satoshi(cls):  # pragma: no cover
 
         for api_call in cls.PLN_RATES:
@@ -501,39 +350,6 @@ class RatesAPI:
         raise ConnectionError('All APIs are unreachable.')
 
     @classmethod
-    def clp_to_satoshi(cls):  # pragma: no cover
-
-        for api_call in cls.CLP_RATES:
-            try:
-                return api_call()
-            except cls.IGNORED_ERRORS:
-                pass
-
-        raise ConnectionError('All APIs are unreachable.')
-
-    @classmethod
-    def sgd_to_satoshi(cls):  # pragma: no cover
-
-        for api_call in cls.SGD_RATES:
-            try:
-                return api_call()
-            except cls.IGNORED_ERRORS:
-                pass
-
-        raise ConnectionError('All APIs are unreachable.')
-
-    @classmethod
-    def thb_to_satoshi(cls):  # pragma: no cover
-
-        for api_call in cls.THB_RATES:
-            try:
-                return api_call()
-            except cls.IGNORED_ERRORS:
-                pass
-
-        raise ConnectionError('All APIs are unreachable.')
-
-    @classmethod
     def twd_to_satoshi(cls):  # pragma: no cover
 
         for api_call in cls.TWD_RATES:
@@ -547,9 +363,9 @@ class RatesAPI:
 
 EXCHANGE_RATES = {
     'satoshi': satoshi_to_satoshi,
-    'ubtc': ubtc_to_satoshi,
-    'mbtc': mbtc_to_satoshi,
-    'btc': btc_to_satoshi,
+    'uppc': ubtc_to_satoshi,
+    'mppc': mbtc_to_satoshi,
+    'ppc': btc_to_satoshi,
     'usd': RatesAPI.usd_to_satoshi,
     'eur': RatesAPI.eur_to_satoshi,
     'gbp': RatesAPI.gbp_to_satoshi,
@@ -562,15 +378,10 @@ EXCHANGE_RATES = {
     'brl': RatesAPI.brl_to_satoshi,
     'chf': RatesAPI.chf_to_satoshi,
     'sek': RatesAPI.sek_to_satoshi,
-    'dkk': RatesAPI.dkk_to_satoshi,
-    'isk': RatesAPI.isk_to_satoshi,
     'pln': RatesAPI.pln_to_satoshi,
     'hkd': RatesAPI.hkd_to_satoshi,
     'krw': RatesAPI.krw_to_satoshi,
-    'sgd': RatesAPI.sgd_to_satoshi,
-    'thb': RatesAPI.thb_to_satoshi,
     'twd': RatesAPI.twd_to_satoshi,
-    'clp': RatesAPI.clp_to_satoshi
 }
 
 

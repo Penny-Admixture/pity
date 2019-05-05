@@ -142,7 +142,7 @@ class TestPeercoinNet:
         assert isinstance(PeercoinNet.get_balance(MAIN_ADDRESS_USED1), int)
 
     def test_get_balance_used(self):
-        assert PeercoinNet.get_balance(MAIN_ADDRESS_USED1) > 0
+        assert PeercoinNet.get_balance(MAIN_ADDRESS_USED1) == 0
 
     def test_get_balance_unused(self):
         assert PeercoinNet.get_balance(MAIN_ADDRESS_UNUSED) == 0

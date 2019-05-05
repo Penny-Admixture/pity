@@ -67,7 +67,7 @@ class ExplorerAPI:
         try:
             return [
                 Unspent(
-                    currency_to_satoshi(tx["value"], "btc"),
+                    currency_to_satoshi(tx["value"], "ppc"),
                     1,  # presume 1 confirmation
                     tx["script"],
                     tx["tx_hash"],
@@ -143,7 +143,7 @@ class PeercoinNet(ExplorerAPI):
         try:
             return [
                 Unspent(
-                    currency_to_satoshi(tx["value"], "btc"),
+                    currency_to_satoshi(tx["value"], "ppc"),
                     1,  # presume 1 confirmation
                     tx["script"],
                     tx["tx_hash"],

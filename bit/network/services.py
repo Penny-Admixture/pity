@@ -23,13 +23,13 @@ class ExplorerAPI:
     MAIN_TX_PUSH_API = MAIN_API + "/sendrawtransaction/{}"
 
     @classmethod
-    def get_balance(cls, address: str) -> str:
+    def get_balance(cls, address: str) -> int:
 
         r = requests.get(cls.MAIN_BALANCE_API.format(address), timeout=DEFAULT_TIMEOUT)
         if r.status_code != 200:  # pragma: no cover
             raise ConnectionError
         try:
-            return currency_to_satoshi(r.json(), "btc")
+            return currency_to_satoshi(r.json() / 10**8, "ppc")
         except:
             return 0
 
@@ -66,8 +66,8 @@ class ExplorerAPI:
 
         try:
             return [
-                Unspent(
-                    currency_to_satoshi(tx["value"], "ppc"),
+                Unspent(  # divide by 10**8 because explorer handles the decimals wrong (extra 2 zeros)
+                    currency_to_satoshi(tx["value"] / 10**8, "ppc"),
                     1,  # presume 1 confirmation
                     tx["script"],
                     tx["tx_hash"],
@@ -102,12 +102,12 @@ class PeercoinNet(ExplorerAPI):
     TEST_TX_PUSH_API = TEST_API + "/sendrawtransaction/{}"
 
     @classmethod
-    def get_balance_testnet(cls, address):
+    def get_balance_testnet(cls, address: str) -> int:
         r = requests.get(cls.TEST_BALANCE_API.format(address), timeout=DEFAULT_TIMEOUT)
         if r.status_code != 200:  # pragma: no cover
             raise ConnectionError
         try:
-            return currency_to_satoshi(r.json(), "btc")
+            return currency_to_satoshi(r.json() / 10**8, "ppc")
         except:
             return 0
 
@@ -142,8 +142,8 @@ class PeercoinNet(ExplorerAPI):
 
         try:
             return [
-                Unspent(
-                    currency_to_satoshi(tx["value"], "ppc"),
+                Unspent(  # divide by 10**8 because explorer handles the decimals wrong (extra 2 zeros)
+                    currency_to_satoshi(tx["value"] / 10**8, "ppc"),
                     1,  # presume 1 confirmation
                     tx["script"],
                     tx["tx_hash"],

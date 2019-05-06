@@ -375,7 +375,7 @@ def select_coins(target, fee, output_size, min_change, *, absolute_fee=False,
                 len(output_size),
                 fee
             )
-            estimated_fee = fee if absolute_fee else estimated_fee
+            estimated_fee = fee
             remaining = sum(u.amount for u in selected_coins) - target - estimated_fee
             if remaining >= min_change and (not consolidate or len(unspents) == 0):
                 break
@@ -434,12 +434,10 @@ def deserialize(tx):
 
 
 def sanitize_tx_data(unspents, outputs, fee, leftover, combine=True,
-                     message=None, compressed=True, absolute_fee=False,
+                     message=None, compressed=True,
                      min_change=0, version='main'):
     """
     sanitize_tx_data()
-
-    fee is in satoshis per byte.
     """
 
     outputs = outputs.copy()
@@ -470,7 +468,7 @@ def sanitize_tx_data(unspents, outputs, fee, leftover, combine=True,
     # Use Branch-and-Bound for coin selection:
     unspents[:], remaining = select_coins(
         sum_outputs, fee, output_size, min_change=min_change,
-        absolute_fee=absolute_fee, consolidate=combine, unspents=unspents
+        consolidate=combine, unspents=unspents
     )
 
     if remaining > 0:
@@ -719,8 +717,7 @@ def sign_tx(private_key, tx, *, unspents):
 
             witness = (int_to_varint(witness_count) if segwit_input else b'') \
                 + b'\x00' + witness + script_blob
-            witness += (int_to_varint(len(private_key.redeemscript)) if
-                segwit_input else script_push(len(private_key.redeemscript))) \
+            witness += (int_to_varint(len(private_key.redeemscript)) if segwit_input else script_push(len(private_key.redeemscript))) \
                 + private_key.redeemscript
 
             script_sig = script_sig if segwit_input else witness
@@ -767,7 +764,11 @@ def create_new_transaction(private_key, unspents, outputs):
         inputs.append(TxIn(script_sig, txid, txindex, amount=amount,
                            segwit_input=unspent.segwit))
 
-    tx_unsigned = TxObj(version, int(time.time()), inputs, outputs, lock_time)
+    tx_unsigned = TxObj(version=version,
+                        timestamp=int(time.time()),
+                        TxIn=inputs,
+                        TxOut=outputs,
+                        locktime=lock_time)
 
     tx = sign_tx(private_key, tx_unsigned, unspents=unspents)
     return tx

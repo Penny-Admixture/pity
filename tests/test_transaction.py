@@ -332,6 +332,13 @@ class TestTxObj:
         assert TxObj.is_segwit(bytes(txobj))
         assert TxObj.is_segwit(bytes(txobj).hex())
 
+    def test_tx_size(self):
+        txin = [TxIn(b'script', b'txid', b'\x04', sequence=b'\xff\xff\xff\xff')]
+        txout = [TxOut(b'\x88\x13\x00\x00\x00\x00\x00\x00', b'script_pubkey')]
+        txobj = TxObj(b'\x01\x00\x00\x00', b'\x1eX\xd0\\\x00\x00\x00\x00', txin, txout, b'\x00\x00\x00\x00')
+
+        assert txobj.size == 112
+
 
 class TestSanitizeTxData:
     def test_no_input(self):

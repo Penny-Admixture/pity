@@ -7,7 +7,7 @@ from bit.format import (
     multisig_to_address, multisig_to_redeemscript, public_key_to_segwit_address,
     multisig_to_segwit_address
 )
-from bit.network import NetworkAPI, get_fee_cached, satoshi_to_currency_cached
+from bit.network import NetworkAPI, satoshi_to_currency_cached
 from bit.network.meta import Unspent
 from bit.transaction import (
     calc_txid, create_new_transaction, sanitize_tx_data, sign_tx,
@@ -253,7 +253,7 @@ class PrivateKey(BaseKey):
             self.transactions += NetworkAPI.get_transactions(self.segwit_address)
         return self.transactions
 
-    def create_transaction(self, outputs, fee=None, absolute_fee=False,
+    def create_transaction(self, outputs, fee=None,
                            leftover=None, combine=True, message=None,
                            unspents=None):  # pragma: no cover
         """Creates a signed P2PKH transaction.
@@ -264,10 +264,7 @@ class PrivateKey(BaseKey):
                         a valid input to ``decimal.Decimal``. The currency
                         must be :ref:`supported <supported currencies>`.
         :type outputs: ``list`` of ``tuple``
-        :param fee: The number of satoshi per byte to pay to miners. By default
-                    Bit will poll `<https://bitcoinfees.earn.com>`_ and use a fee
-                    that will allow your transaction to be confirmed as soon as
-                    possible.
+        :param fee: Transaction fee, in satoshis.
         :type fee: ``int``
         :param leftover: The destination that will receive any change from the
                          transaction. By default Bit will send any change to
@@ -300,17 +297,16 @@ class PrivateKey(BaseKey):
         unspents, outputs = sanitize_tx_data(
             unspents,
             outputs,
-            fee or get_fee_cached(),
-            leftover or return_address,
+            fee=10000,
+            leftover=leftover or return_address,
             combine=combine,
             message=message,
-            absolute_fee=absolute_fee,
             version=self.version
         )
 
         return create_new_transaction(self, unspents, outputs)
 
-    def send(self, outputs, fee=None, absolute_fee=False, leftover=None,
+    def send(self, outputs, leftover=None, fee=None,
              combine=True, message=None, unspents=None):  # pragma: no cover
         """Creates a signed P2PKH transaction and attempts to broadcast it on
         the blockchain. This accepts the same arguments as
@@ -322,10 +318,7 @@ class PrivateKey(BaseKey):
                         a valid input to ``decimal.Decimal``. The currency
                         must be :ref:`supported <supported currencies>`.
         :type outputs: ``list`` of ``tuple``
-        :param fee: The number of satoshi per byte to pay to miners. By default
-                    Bit will poll `<https://bitcoinfees.earn.com>`_ and use a fee
-                    that will allow your transaction to be confirmed as soon as
-                    possible.
+        :param fee: :param fee: Transaction fee, in satoshis.
         :type fee: ``int``
         :param leftover: The destination that will receive any change from the
                          transaction. By default Bit will send any change to
@@ -348,8 +341,7 @@ class PrivateKey(BaseKey):
 
         tx_hex = self.create_transaction(
             outputs,
-            fee=fee,
-            absolute_fee=absolute_fee,
+            fee=fee if fee else 10000,
             leftover=leftover,
             combine=combine,
             message=message,
@@ -361,8 +353,8 @@ class PrivateKey(BaseKey):
         return calc_txid(tx_hex)
 
     @classmethod
-    def prepare_transaction(cls, address, outputs, compressed=True, fee=None,
-                            absolute_fee=False, leftover=None, combine=True,
+    def prepare_transaction(cls, address, outputs, compressed=True,
+                            leftover=None, combine=True, fee=None,
                             message=None, unspents=None):  # pragma: no cover
         """Prepares a P2PKH transaction for offline signing.
 
@@ -377,10 +369,7 @@ class PrivateKey(BaseKey):
         :param compressed: Whether or not the ``address`` corresponds to a
                            compressed public key. This influences the fee.
         :type compressed: ``bool``
-        :param fee: The number of satoshi per byte to pay to miners. By default
-                    Bit will poll `<https://bitcoinfees.earn.com>`_ and use a fee
-                    that will allow your transaction to be confirmed as soon as
-                    possible.
+        :param fee: Transaction fee, in satoshis.
         :type fee: ``int``
         :param leftover: The destination that will receive any change from the
                          transaction. By default Bit will send any change to
@@ -403,11 +392,10 @@ class PrivateKey(BaseKey):
         unspents, outputs = sanitize_tx_data(
             unspents or NetworkAPI.get_unspent(address),
             outputs,
-            fee or get_fee_cached(),
-            leftover or address,
+            fee=fee if fee else 10000,
+            leftover=leftover or address,
             combine=combine,
             message=message,
-            absolute_fee=absolute_fee,
             version='main'
         )
 
@@ -619,7 +607,7 @@ class PrivateKeyTestnet(BaseKey):
             self.transactions += NetworkAPI.get_transactions_testnet(self.segwit_address)
         return self.transactions
 
-    def create_transaction(self, outputs, fee=None, absolute_fee=False,
+    def create_transaction(self, outputs, fee=None,
                            leftover=None, combine=True, message=None,
                            unspents=None):  # pragma: no cover
         """Creates a signed P2PKH transaction.
@@ -630,10 +618,7 @@ class PrivateKeyTestnet(BaseKey):
                         a valid input to ``decimal.Decimal``. The currency
                         must be :ref:`supported <supported currencies>`.
         :type outputs: ``list`` of ``tuple``
-        :param fee: The number of satoshi per byte to pay to miners. By default
-                    Bit will poll `<https://bitcoinfees.earn.com>`_ and use a fee
-                    that will allow your transaction to be confirmed as soon as
-                    possible.
+        :param fee: Transaction fee, in satoshis.
         :type fee: ``int``
         :param leftover: The destination that will receive any change from the
                          transaction. By default Bit will send any change to
@@ -666,17 +651,16 @@ class PrivateKeyTestnet(BaseKey):
         unspents, outputs = sanitize_tx_data(
             unspents,
             outputs,
-            fee or get_fee_cached(),
+            fee if fee else 10000,
             leftover or return_address,
             combine=combine,
             message=message,
-            absolute_fee=absolute_fee,
             version=self.version
         )
 
         return create_new_transaction(self, unspents, outputs)
 
-    def send(self, outputs, fee=None, absolute_fee=False, leftover=None,
+    def send(self, outputs, fee=None, leftover=None,
              combine=True, message=None, unspents=None):  # pragma: no cover
         """Creates a signed P2PKH transaction and attempts to broadcast it on
         the testnet blockchain. This accepts the same arguments as
@@ -688,10 +672,7 @@ class PrivateKeyTestnet(BaseKey):
                         a valid input to ``decimal.Decimal``. The currency
                         must be :ref:`supported <supported currencies>`.
         :type outputs: ``list`` of ``tuple``
-        :param fee: The number of satoshi per byte to pay to miners. By default
-                    Bit will poll `<https://bitcoinfees.earn.com>`_ and use a fee
-                    that will allow your transaction to be confirmed as soon as
-                    possible.
+        :param fee: Transaction fee, in satoshis.
         :type fee: ``int``
         :param leftover: The destination that will receive any change from the
                          transaction. By default Bit will send any change to
@@ -714,8 +695,7 @@ class PrivateKeyTestnet(BaseKey):
 
         tx_hex = self.create_transaction(
             outputs,
-            fee=fee,
-            absolute_fee=absolute_fee,
+            fee if fee else 10000,
             leftover=leftover,
             combine=combine,
             message=message,
@@ -727,8 +707,8 @@ class PrivateKeyTestnet(BaseKey):
         return calc_txid(tx_hex)
 
     @classmethod
-    def prepare_transaction(cls, address, outputs, compressed=True, fee=None,
-                            absolute_fee=False, leftover=None, combine=True,
+    def prepare_transaction(cls, address, outputs, compressed=True,
+                            leftover=None, combine=True, fee=None,
                             message=None, unspents=None):  # pragma: no cover
         """Prepares a P2PKH transaction for offline signing.
 
@@ -743,10 +723,7 @@ class PrivateKeyTestnet(BaseKey):
         :param compressed: Whether or not the ``address`` corresponds to a
                            compressed public key. This influences the fee.
         :type compressed: ``bool``
-        :param fee: The number of satoshi per byte to pay to miners. By default
-                    Bit will poll `<https://bitcoinfees.earn.com>`_ and use a fee
-                    that will allow your transaction to be confirmed as soon as
-                    possible.
+        :param fee: Transaction fee, in satoshis.
         :type fee: ``int``
         :param leftover: The destination that will receive any change from the
                          transaction. By default Bit will send any change to
@@ -769,11 +746,10 @@ class PrivateKeyTestnet(BaseKey):
         unspents, outputs = sanitize_tx_data(
             unspents or NetworkAPI.get_unspent_testnet(address),
             outputs,
-            fee or get_fee_cached(),
+            fee if fee else 10000,
             leftover or address,
             combine=combine,
             message=message,
-            absolute_fee=absolute_fee,
             version='test'
         )
 
@@ -1021,7 +997,7 @@ class MultiSig:
             self.transactions += NetworkAPI.get_transactions(self.segwit_address)
         return self.transactions
 
-    def create_transaction(self, outputs, fee=None, absolute_fee=False,
+    def create_transaction(self, outputs, fee=None,
                            leftover=None, combine=True, message=None,
                            unspents=None):  # pragma: no cover
         """Creates a signed P2SH transaction.
@@ -1032,10 +1008,7 @@ class MultiSig:
                         a valid input to ``decimal.Decimal``. The currency
                         must be :ref:`supported <supported currencies>`.
         :type outputs: ``list`` of ``tuple``
-        :param fee: The number of satoshi per byte to pay to miners. By default
-                    Bit will poll `<https://bitcoinfees.21.co>`_ and use a fee
-                    that will allow your transaction to be confirmed as soon as
-                    possible.
+        :param fee: Transaction fee, in satoshis.
         :type fee: ``int``
         :param leftover: The destination that will receive any change from the
                          transaction. By default Bit will send any change to
@@ -1068,11 +1041,10 @@ class MultiSig:
         unspents, outputs = sanitize_tx_data(
             unspents,
             outputs,
-            fee or get_fee_cached(),
-            leftover or return_address,
+            fee=fee if fee else 10000,
+            leftover=leftover or return_address,
             combine=combine,
             message=message,
-            absolute_fee=absolute_fee,
             version=self.version
         )
 
@@ -1080,7 +1052,7 @@ class MultiSig:
 
     @classmethod
     def prepare_transaction(cls, address, outputs, compressed=True, fee=None,
-                            absolute_fee=False, leftover=None, combine=True,
+                            leftover=None, combine=True,
                             message=None, unspents=None):  # pragma: no cover
         """Prepares a P2SH transaction for offline signing.
 
@@ -1095,10 +1067,7 @@ class MultiSig:
         :param compressed: Whether or not the ``address`` corresponds to a
                            compressed public key. This influences the fee.
         :type compressed: ``bool``
-        :param fee: The number of satoshi per byte to pay to miners. By default
-                    Bit will poll `<https://bitcoinfees.21.co>`_ and use a fee
-                    that will allow your transaction to be confirmed as soon as
-                    possible.
+        :param fee: Transaction fee, in satoshis.
         :type fee: ``int``
         :param leftover: The destination that will receive any change from the
                          transaction. By default Bit will send any change to
@@ -1121,11 +1090,10 @@ class MultiSig:
         unspents, outputs = sanitize_tx_data(
             unspents or NetworkAPI.get_unspent(address),
             outputs,
-            fee or get_fee_cached(),
-            leftover or address,
+            fee=fee if fee else 10000,
+            leftover=leftover or address,
             combine=combine,
             message=message,
-            absolute_fee=absolute_fee,
             version='main'
         )
 
@@ -1324,7 +1292,7 @@ class MultiSigTestnet:
             self.transactions += NetworkAPI.get_transactions_testnet(self.segwit_address)
         return self.transactions
 
-    def create_transaction(self, outputs, fee=None, absolute_fee=False,
+    def create_transaction(self, outputs, fee=None,
                            leftover=None, combine=True, message=None,
                            unspents=None):  # pragma: no cover
         """Creates a signed P2SH transaction.
@@ -1335,10 +1303,7 @@ class MultiSigTestnet:
                         a valid input to ``decimal.Decimal``. The currency
                         must be :ref:`supported <supported currencies>`.
         :type outputs: ``list`` of ``tuple``
-        :param fee: The number of satoshi per byte to pay to miners. By default
-                    Bit will poll `<https://bitcoinfees.21.co>`_ and use a fee
-                    that will allow your transaction to be confirmed as soon as
-                    possible.
+        :param fee: Transaction fee, in satoshis.
         :type fee: ``int``
         :param leftover: The destination that will receive any change from the
                          transaction. By default Bit will send any change to
@@ -1371,11 +1336,10 @@ class MultiSigTestnet:
         unspents, outputs = sanitize_tx_data(
             unspents,
             outputs,
-            fee or get_fee_cached(),
-            leftover or return_address,
+            fee=fee if fee else 10000,
+            leftover=leftover or return_address,
             combine=combine,
             message=message,
-            absolute_fee=absolute_fee,
             version=self.version
         )
 
@@ -1383,7 +1347,7 @@ class MultiSigTestnet:
 
     @classmethod
     def prepare_transaction(cls, address, outputs, compressed=True, fee=None,
-                            absolute_fee=False, leftover=None, combine=True,
+                            leftover=None, combine=True,
                             message=None, unspents=None):  # pragma: no cover
         """Prepares a P2SH transaction for offline signing.
 
@@ -1398,10 +1362,7 @@ class MultiSigTestnet:
         :param compressed: Whether or not the ``address`` corresponds to a
                            compressed public key. This influences the fee.
         :type compressed: ``bool``
-        :param fee: The number of satoshi per byte to pay to miners. By default
-                    Bit will poll `<https://bitcoinfees.21.co>`_ and use a fee
-                    that will allow your transaction to be confirmed as soon as
-                    possible.
+        :param fee: Transaction fee, in satoshis.
         :type fee: ``int``
         :param leftover: The destination that will receive any change from the
                          transaction. By default Bit will send any change to
@@ -1424,11 +1385,10 @@ class MultiSigTestnet:
         unspents, outputs = sanitize_tx_data(
             unspents or NetworkAPI.get_unspent_testnet(address),
             outputs,
-            fee or get_fee_cached(),
-            leftover or address,
+            fee=fee if fee else 10000,
+            leftover=leftover or address,
             combine=combine,
             message=message,
-            absolute_fee=absolute_fee,
             version='test'
         )
 

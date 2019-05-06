@@ -290,8 +290,9 @@ class TestTxObj:
         txout = [TxOut(b'\x88\x13\x00\x00\x00\x00\x00\x00', b'script_pubkey')]
         txobj = TxObj(b'\x01\x00\x00\x00', b'\x1eX\xd0\\\x00\x00\x00\x00', txin, txout, b'\x00\x00\x00\x00')
 
-        assert repr(txobj) == "TxObj({}, {}, {}, {})" \
+        assert repr(txobj) == "TxObj({}, {}, {}, {}, {})" \
                               "".format(repr(b'\x01\x00\x00\x00'),
+                                        repr(b'\x1eX\xd0\\\x00\x00\x00\x00'),
                                         repr(txin),
                                         repr(txout),
                                         repr(b'\x00\x00\x00\x00'))
@@ -302,6 +303,7 @@ class TestTxObj:
         txobj = TxObj(b'\x01\x00\x00\x00', b'\x1eX\xd0\\\x00\x00\x00\x00', txin, txout, b'\x00\x00\x00\x00')
 
         assert bytes(txobj) == b''.join([b'\x01\x00\x00\x00',
+                                         b'\x1eX\xd0\\\x00\x00\x00\x00',
                                          b'\x01txid\x04\x06script\xff\xff\xff\xff',
                                          b'\x01\x88\x13\x00\x00\x00\x00\x00\x00\rscript_pubkey',
                                          b'\x00\x00\x00\x00'])
@@ -311,7 +313,9 @@ class TestTxObj:
         txout = [TxOut(b'\x88\x13\x00\x00\x00\x00\x00\x00', b'script_pubkey')]
         txobj = TxObj(b'\x01\x00\x00\x00', b'\x1eX\xd0\\\x00\x00\x00\x00', txin, txout, b'\x00\x00\x00\x00')
 
-        assert bytes(txobj) == b''.join([b'\x01\x00\x00\x00', b'\x00\x01',
+        assert bytes(txobj) == b''.join([b'\x01\x00\x00\x00',
+                                         b'\x1eX\xd0\\\x00\x00\x00\x00',
+                                         b'\x00\x01',
                                          b'\x01txid\x04\x06script\xff\xff\xff\xff',
                                          b'\x01\x88\x13\x00\x00\x00\x00\x00\x00\rscript_pubkey',
                                          b'witness',

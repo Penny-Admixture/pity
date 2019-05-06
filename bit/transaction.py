@@ -191,6 +191,10 @@ class TxObj:
             tx = hex_to_bytes(tx)
         return tx[8:10] == MARKER + FLAG
 
+    @property
+    def size(self):
+        return len(self.to_hex())
+
 
 def calc_txid(tx_hex):
     tx_obj = deserialize(tx_hex)

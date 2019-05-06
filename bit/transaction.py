@@ -189,7 +189,7 @@ class TxObj:
             tx = bytes(tx)
         elif not isinstance(tx, bytes):
             tx = hex_to_bytes(tx)
-        return tx[4:6] == MARKER + FLAG
+        return tx[8:10] == MARKER + FLAG
 
 
 def calc_txid(tx_hex):

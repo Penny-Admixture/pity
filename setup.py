@@ -7,20 +7,18 @@ with open('bit/__init__.py', 'r') as f:
             break
 
 setup(
-    name='bit',
+    name='pity',
     version=version,
-    description='Bitcoin made easy.',
-    long_description=open('README.rst', 'r').read(),
-    author='Ofek Lev',
-    author_email='ofekmeister@gmail.com',
-    maintainer='Ofek Lev',
-    maintainer_email='ofekmeister@gmail.com',
-    url='https://github.com/ofek/bit',
-    download_url='https://github.com/ofek/bit',
+    description='Peercoin made easy.',
+    long_description=open('README.md', 'r').read(),
+    author='Peerchemist',
+    author_email='peerchemist@protonmail.ch',
+    url='https://github.com/peercoin/pity',
+    download_url='https://github.com/peercoin/pity',
     license='MIT',
 
     keywords=(
-        'bitcoin',
+        'peercoin',
         'cryptocurrency',
         'payments',
         'tools',

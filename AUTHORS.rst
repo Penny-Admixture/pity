@@ -4,6 +4,7 @@ Maintainers
 -----------
 
 - Ofek Lev <ofekmeister@gmail.com> `@ofek <https://github.com/ofek>`_
+- Peerchemist <Peerchemist@protonmail.ch> `@peerchemist <https://github.com/peerchemist>`_
 
 Contributors
 ------------

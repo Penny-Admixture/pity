@@ -166,6 +166,7 @@ class RatesAPI:
     number of satoshi.
     """
     IGNORED_ERRORS = (requests.exceptions.ConnectionError,
+                      requests.exceptions.HTTPError,
                       requests.exceptions.Timeout)
 
     USD_RATES = [CoinPaprikaRates.usd_to_satoshi]

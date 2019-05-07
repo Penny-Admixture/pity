@@ -563,6 +563,7 @@ def calculate_preimages(tx_obj, inputs_parameters):
             # BIP-143 preimage:
             hashed = sha256(
                 tx_obj.version +
+                tx_obj.timestamp +
                 hashPrevouts +
                 hashSequence +
                 tx_obj.TxIn[input_index].txid +
@@ -577,6 +578,7 @@ def calculate_preimages(tx_obj, inputs_parameters):
         else:
             hashed = sha256(
                 tx_obj.version +
+                tx_obj.timestamp +
                 input_count +
                 b''.join(ti.txid + ti.txindex + OP_0 + ti.sequence
                          for ti in islice(tx_obj.TxIn, input_index)) +

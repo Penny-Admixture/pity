@@ -238,9 +238,6 @@ def select_coins(target, fee, output_size, min_change, *, absolute_fee=False,
     :param min_change: The minimum amount of satoshis allowed for the
                        return/change address if there is no perfect match.
     :type min_change: ``int``
-    :param absolute_fee: Whether or not the parameter ``fee`` should be
-                         repurposed to denote the exact fee amount.
-    :type absolute_fee: ``bool``
     :param consolidate: Whether or not the Branch-and-Bound process for finding
                         a perfect match should be skipped and all unspents
                         used directly.

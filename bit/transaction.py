@@ -752,6 +752,7 @@ def create_new_transaction(private_key, unspents, outputs):
 
     version = VERSION_1
     lock_time = LOCK_TIME
+    timestamp = int(time.time()).to_bytes(4, byteorder='little')
     outputs = construct_outputs(outputs)
 
     # Optimize for speed, not memory, by pre-computing values.
@@ -765,7 +766,7 @@ def create_new_transaction(private_key, unspents, outputs):
                            segwit_input=unspent.segwit))
 
     tx_unsigned = TxObj(version=version,
-                        timestamp=int(time.time()),
+                        timestamp=timestamp,
                         TxIn=inputs,
                         TxOut=outputs,
                         locktime=lock_time)

@@ -20,7 +20,7 @@ class ExplorerAPI:
     MAIN_ADDRESS_API = MAIN_EXT_API + "/getaddress/{}"
     MAIN_TX_API = MAIN_API + '/getrawtransaction?txid={}'
     MAIN_UNSPENT_API = MAIN_EXT_API + "/listunspent/{}"
-    MAIN_TX_PUSH_API = MAIN_API + "/sendrawtransaction/{}"
+    MAIN_TX_PUSH_API = MAIN_API + "/sendrawtransaction/?hex={}"
 
     @classmethod
     def get_balance(cls, address: str) -> int:
@@ -80,11 +80,9 @@ class ExplorerAPI:
 
     @classmethod
     def broadcast_tx(cls, tx_hex):  # pragma: no cover
-        r = requests.post(
-            cls.MAIN_TX_PUSH_API,
-            data={cls.TX_PUSH_PARAM: tx_hex},
-            timeout=DEFAULT_TIMEOUT,
-        )
+
+        r = requests.get(cls.MAIN_TX_PUSH_API.format(tx_hex), timeout=DEFAULT_TIMEOUT)
+
         return True if r.status_code == 200 else False
 
 
@@ -99,7 +97,7 @@ class PeercoinNet(ExplorerAPI):
     TEST_ADDRESS_API = TEST_EXT_API + "/getaddress/{}"
     TEST_TX_API = TEST_API + '/getrawtransaction?txid={}'
     TEST_UNSPENT_API = TEST_EXT_API + "/listunspent/{}"
-    TEST_TX_PUSH_API = TEST_API + "/sendrawtransaction/{}"
+    TEST_TX_PUSH_API = TEST_API + "/sendrawtransaction/?hex={}"
 
     @classmethod
     def get_balance_testnet(cls, address: str) -> int:
@@ -156,11 +154,9 @@ class PeercoinNet(ExplorerAPI):
 
     @classmethod
     def broadcast_tx_testnet(cls, tx_hex):  # pragma: no cover
-        r = requests.post(
-            cls.TEST_TX_PUSH_API,
-            data={cls.TX_PUSH_PARAM: tx_hex},
-            timeout=DEFAULT_TIMEOUT,
-        )
+
+        r = requests.get(cls.TEST_TX_PUSH_API.format(tx_hex), timeout=DEFAULT_TIMEOUT)
+
         return True if r.status_code == 200 else False
 
 

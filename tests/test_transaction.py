@@ -249,9 +249,9 @@ class TestTxObj:
     def test_init(self):
         txin = [TxIn(b'script', b'txid', b'\x04', sequence=b'\xff\xff\xff\xff')]
         txout = [TxOut(b'\x88\x13\x00\x00\x00\x00\x00\x00', b'script_pubkey')]
-        txobj = TxObj(b'\x01\x00\x00\x00', b'\x1eX\xd0\\\x00\x00\x00\x00', txin, txout, b'\x00\x00\x00\x00')
+        txobj = TxObj(b'\x01\x00\x00\x00', b'\xb0Z\xd1\\', txin, txout, b'\x00\x00\x00\x00')
         assert txobj.version == b'\x01\x00\x00\x00'
-        assert txobj.timestamp == b'\x1eX\xd0\\\x00\x00\x00\x00'
+        assert txobj.timestamp == b'\xb0Z\xd1\\'
         assert txobj.TxIn == txin
         assert txobj.TxOut == txout
         assert txobj.locktime == b'\x00\x00\x00\x00'
@@ -259,9 +259,9 @@ class TestTxObj:
     def test_init_segwit(self):
         txin = [TxIn(b'script', b'txid', b'\x04', b'witness', sequence=b'\xff\xff\xff\xff')]
         txout = [TxOut(b'\x88\x13\x00\x00\x00\x00\x00\x00', b'script_pubkey')]
-        txobj = TxObj(b'\x01\x00\x00\x00', b'\x1eX\xd0\\\x00\x00\x00\x00', txin, txout, b'\x00\x00\x00\x00')
+        txobj = TxObj(b'\x01\x00\x00\x00', b'\xb0Z\xd1\\', txin, txout, b'\x00\x00\x00\x00')
         assert txobj.version == b'\x01\x00\x00\x00'
-        assert txobj.timestamp == b'\x1eX\xd0\\\x00\x00\x00\x00'
+        assert txobj.timestamp == b'\xb0Z\xd1\\'
         assert txobj.TxIn == txin
         assert txobj.TxOut == txout
         assert txobj.locktime == b'\x00\x00\x00\x00'
@@ -272,12 +272,12 @@ class TestTxObj:
         txout1 = [TxOut(b'\x88\x13\x00\x00\x00\x00\x00\x00', b'script_pubkey')]
         txout2 = [TxOut(b'\x88\x14\x00\x00\x00\x00\x00\x00', b'script_pubkey')]
 
-        txobj1 = TxObj(b'\x01\x00\x00\x00', b'\x1eX\xd0\\\x00\x00\x00\x00', txin1, txout1, b'\x00\x00\x00\x00')
-        txobj2 = TxObj(b'\x01\x00\x00\x00', b'\x1eX\xd0\\\x00\x00\x00\x00', txin1, txout1, b'\x00\x00\x00\x00')
-        txobj3 = TxObj(b'\x01\x00\x00\x00', b'\x1eX\xd0\\\x00\x00\x00\x00', txin1, txout2, b'\x00\x00\x00\x00')
-        txobj4 = TxObj(b'\x01\x00\x00\x00', b'\x1eX\xd0\\\x00\x00\x00\x00', txin2, txout1, b'\x00\x00\x00\x00')
-        txobj5 = TxObj(b'\x02\x00\x00\x00', b'\x1eX\xd0\\\x00\x00\x00\x00', txin1, txout1, b'\x00\x00\x00\x00')
-        txobj6 = TxObj(b'\x01\x00\x00\x00', b'\x1eX\xd0\\\x00\x00\x00\x00', txin1, txout1, b'\x01\x00\x00\x00')
+        txobj1 = TxObj(b'\x01\x00\x00\x00', b'\xb0Z\xd1\\', txin1, txout1, b'\x00\x00\x00\x00')
+        txobj2 = TxObj(b'\x01\x00\x00\x00', b'\xb0Z\xd1\\', txin1, txout1, b'\x00\x00\x00\x00')
+        txobj3 = TxObj(b'\x01\x00\x00\x00', b'\xb0Z\xd1\\', txin1, txout2, b'\x00\x00\x00\x00')
+        txobj4 = TxObj(b'\x01\x00\x00\x00', b'\xb0Z\xd1\\', txin2, txout1, b'\x00\x00\x00\x00')
+        txobj5 = TxObj(b'\x02\x00\x00\x00', b'\xb0Z\xd1\\', txin1, txout1, b'\x00\x00\x00\x00')
+        txobj6 = TxObj(b'\x01\x00\x00\x00', b'\xb0Z\xd1\\', txin1, txout1, b'\x01\x00\x00\x00')
 
         assert txobj1 == txobj2
         assert txobj1 != txobj3
@@ -288,11 +288,11 @@ class TestTxObj:
     def test_repr(self):
         txin = [TxIn(b'script', b'txid', b'\x04', sequence=b'\xff\xff\xff\xff')]
         txout = [TxOut(b'\x88\x13\x00\x00\x00\x00\x00\x00', b'script_pubkey')]
-        txobj = TxObj(b'\x01\x00\x00\x00', b'\x1eX\xd0\\\x00\x00\x00\x00', txin, txout, b'\x00\x00\x00\x00')
+        txobj = TxObj(b'\x01\x00\x00\x00', b'\xb0Z\xd1\\', txin, txout, b'\x00\x00\x00\x00')
 
         assert repr(txobj) == "TxObj({}, {}, {}, {}, {})" \
                               "".format(repr(b'\x01\x00\x00\x00'),
-                                        repr(b'\x1eX\xd0\\\x00\x00\x00\x00'),
+                                        repr(b'\xb0Z\xd1\\'),
                                         repr(txin),
                                         repr(txout),
                                         repr(b'\x00\x00\x00\x00'))
@@ -300,10 +300,10 @@ class TestTxObj:
     def test_bytes_repr(self):
         txin = [TxIn(b'script', b'txid', b'\x04', sequence=b'\xff\xff\xff\xff')]
         txout = [TxOut(b'\x88\x13\x00\x00\x00\x00\x00\x00', b'script_pubkey')]
-        txobj = TxObj(b'\x01\x00\x00\x00', b'\x1eX\xd0\\\x00\x00\x00\x00', txin, txout, b'\x00\x00\x00\x00')
+        txobj = TxObj(b'\x01\x00\x00\x00', b'\xb0Z\xd1\\', txin, txout, b'\x00\x00\x00\x00')
 
         assert bytes(txobj) == b''.join([b'\x01\x00\x00\x00',
-                                         b'\x1eX\xd0\\\x00\x00\x00\x00',
+                                         b'\xb0Z\xd1\\',
                                          b'\x01txid\x04\x06script\xff\xff\xff\xff',
                                          b'\x01\x88\x13\x00\x00\x00\x00\x00\x00\rscript_pubkey',
                                          b'\x00\x00\x00\x00'])
@@ -311,10 +311,10 @@ class TestTxObj:
     def test_bytes_repr_segwit(self):
         txin = [TxIn(b'script', b'txid', b'\x04', b'witness', sequence=b'\xff\xff\xff\xff')]
         txout = [TxOut(b'\x88\x13\x00\x00\x00\x00\x00\x00', b'script_pubkey')]
-        txobj = TxObj(b'\x01\x00\x00\x00', b'\x1eX\xd0\\\x00\x00\x00\x00', txin, txout, b'\x00\x00\x00\x00')
+        txobj = TxObj(b'\x01\x00\x00\x00', b'\xb0Z\xd1\\', txin, txout, b'\x00\x00\x00\x00')
 
         assert bytes(txobj) == b''.join([b'\x01\x00\x00\x00',
-                                         b'\x1eX\xd0\\\x00\x00\x00\x00',
+                                         b'\xb0Z\xd1\\',
                                          b'\x00\x01',
                                          b'\x01txid\x04\x06script\xff\xff\xff\xff',
                                          b'\x01\x88\x13\x00\x00\x00\x00\x00\x00\rscript_pubkey',
@@ -324,14 +324,14 @@ class TestTxObj:
     def test_is_segwit(self):
         txin = [TxIn(b'script', b'txid', b'\x04', sequence=b'\xff\xff\xff\xff')]
         txout = [TxOut(b'\x88\x13\x00\x00\x00\x00\x00\x00', b'script_pubkey')]
-        txobj = TxObj(b'\x01\x00\x00\x00', b'\x1eX\xd0\\\x00\x00\x00\x00', txin, txout, b'\x00\x00\x00\x00')
+        txobj = TxObj(b'\x01\x00\x00\x00', b'\xb0Z\xd1\\', txin, txout, b'\x00\x00\x00\x00')
         assert not TxObj.is_segwit(txobj)
         assert not TxObj.is_segwit(bytes(txobj))
         assert not TxObj.is_segwit(bytes(txobj).hex())
 
         txin = [TxIn(b'script', b'txid', b'\x04', b'witness', sequence=b'\xff\xff\xff\xff')]
         txout = [TxOut(b'\x88\x13\x00\x00\x00\x00\x00\x00', b'script_pubkey')]
-        txobj = TxObj(b'\x01\x00\x00\x00', b'\x1eX\xd0\\\x00\x00\x00\x00', txin, txout, b'\x00\x00\x00\x00')
+        txobj = TxObj(b'\x01\x00\x00\x00', b'\xb0Z\xd1\\', txin, txout, b'\x00\x00\x00\x00')
         assert TxObj.is_segwit(txobj)
         assert TxObj.is_segwit(bytes(txobj))
         assert TxObj.is_segwit(bytes(txobj).hex())
@@ -339,9 +339,9 @@ class TestTxObj:
     def test_tx_size(self):
         txin = [TxIn(b'script', b'txid', b'\x04', sequence=b'\xff\xff\xff\xff')]
         txout = [TxOut(b'\x88\x13\x00\x00\x00\x00\x00\x00', b'script_pubkey')]
-        txobj = TxObj(b'\x01\x00\x00\x00', b'\x1eX\xd0\\\x00\x00\x00\x00', txin, txout, b'\x00\x00\x00\x00')
+        txobj = TxObj(b'\x01\x00\x00\x00', b'\xb0Z\xd1\\', txin, txout, b'\x00\x00\x00\x00')
 
-        assert txobj.size == 112
+        assert txobj.size == 104
 
 
 class TestSanitizeTxData:

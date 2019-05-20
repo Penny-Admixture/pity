@@ -11,6 +11,7 @@ setup(
     version=version,
     description='Peercoin made easy.',
     long_description=open('README.md', 'r').read(),
+    long_description_content_type='text/markdown',
     author='Peerchemist',
     author_email='peerchemist@protonmail.ch',
     url='https://github.com/peercoin/pity',
